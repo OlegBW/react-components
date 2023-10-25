@@ -10,9 +10,6 @@
     "preview": "vite preview",
     "prepare": "cd .. && husky install react-components/.husky"
   },
-  "husky":{
-    "pre-commit": "npx lint-staged"
-  },
   "lint-staged": {
     "*.{ts,tsx}": "npm run lint"
   },
