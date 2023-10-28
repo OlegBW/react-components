@@ -1,11 +1,24 @@
 import { ChangeEvent, Component, ReactNode } from 'react';
+import { getPokemonData, getPokemonsData, PokemonData } from '../api/api';
+
+type DataState = {
+  pokemonData: PokemonData[];
+};
+
+type Props = {
+  setPokemonData: (state: DataState) => void;
+};
 
 const initialValue = {
   query: '',
 };
 
-export default class SearchBar extends Component {
+export default class SearchBar extends Component<Props> {
   state = initialValue;
+
+  constructor(props: Props) {
+    super(props);
+  }
 
   handleChange(e: ChangeEvent) {
     const target = e.target;
@@ -17,10 +30,21 @@ export default class SearchBar extends Component {
   }
 
   handleSearch() {
-    if (this.state.query === '') {
+    const query = this.state.query.toLowerCase();
+    if (query === '') {
       console.log('fetch all');
+      getPokemonsData().then((data) => {
+        this.props.setPokemonData({
+          pokemonData: data,
+        });
+      });
     } else {
-      console.log(`fetch ${this.state.query}`);
+      console.log(`fetch ${query}`);
+      getPokemonData(query).then((data) => {
+        this.props.setPokemonData({
+          pokemonData: [data],
+        });
+      });
     }
 
     localStorage.setItem('query', this.state.query);
