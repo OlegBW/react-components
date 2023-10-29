@@ -1,5 +1,6 @@
-import { ChangeEvent, Component, ReactNode } from 'react';
+import { ChangeEvent, Component, ReactNode, MouseEvent } from 'react';
 import { getPokemonData, getPokemonsData, PokemonData } from '../api/api';
+import '../styles/search-bar.css';
 
 type DataState = {
   pokemonData: PokemonData[];
@@ -11,6 +12,7 @@ type Props = {
 
 const initialValue = {
   query: '',
+  hasError: false,
 };
 
 export default class SearchBar extends Component<Props> {
@@ -50,6 +52,14 @@ export default class SearchBar extends Component<Props> {
     localStorage.setItem('query', this.state.query);
   }
 
+  handleFallback(e: MouseEvent) {
+    this.setState({
+      ...this.state,
+      hasError: true,
+    });
+    e.preventDefault();
+  }
+
   componentDidMount(): void {
     const query = localStorage.getItem('query');
     if (query) {
@@ -62,14 +72,22 @@ export default class SearchBar extends Component<Props> {
   // }
 
   render(): ReactNode {
+    if (this.state.hasError) throw new Error('Fallback');
     return (
-      <div>
+      <div className="search-bar">
         <input
+          className="search-bar__input"
           onChange={(e) => this.handleChange(e)}
           type="text"
           value={this.state.query}
         />
-        <button onClick={() => this.handleSearch()}>Search</button>
+        <button
+          className="search-bar__button"
+          onClick={() => this.handleSearch()}
+          onContextMenu={(e) => this.handleFallback(e)}
+        >
+          Search
+        </button>
       </div>
     );
   }

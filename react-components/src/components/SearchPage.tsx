@@ -16,7 +16,7 @@ export default class SearchPage extends Component {
 
   render(): ReactNode {
     return (
-      <div>
+      <div className="search-page">
         <SearchBar setPokemonData={this.setState} />
         <CardsList pokemonData={this.state.pokemonData} />
       </div>

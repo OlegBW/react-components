@@ -1,6 +1,7 @@
 import { Component, ReactNode } from 'react';
 import { PokemonData } from '../api/api';
 import Card from './Card';
+import '../styles/card-list.css';
 
 function capitalize(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -26,7 +27,7 @@ export default class CardsList extends Component<Props> {
 
   render(): ReactNode {
     return (
-      <div>
+      <div className="card-list">
         {this.props.pokemonData.map((pokemon) => {
           return (
             <Card

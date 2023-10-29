@@ -1,4 +1,5 @@
 import { Component, ReactNode } from 'react';
+import '../styles/card.css';
 
 type Props = {
   title: string;
