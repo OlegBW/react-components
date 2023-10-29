@@ -34,14 +34,12 @@ export default class SearchBar extends Component<Props> {
   handleSearch() {
     const query = this.state.query.toLowerCase();
     if (query === '') {
-      console.log('fetch all');
       getPokemonsData().then((data) => {
         this.props.setPokemonData({
           pokemonData: data,
         });
       });
     } else {
-      console.log(`fetch ${query}`);
       getPokemonData(query).then((data) => {
         this.props.setPokemonData({
           pokemonData: [data],
@@ -66,10 +64,6 @@ export default class SearchBar extends Component<Props> {
       this.setState({ query });
     }
   }
-
-  // componentWillUnmount(): void {
-  //   localStorage.setItem('query', this.state.query);
-  // }
 
   render(): ReactNode {
     if (this.state.hasError) throw new Error('Fallback');
