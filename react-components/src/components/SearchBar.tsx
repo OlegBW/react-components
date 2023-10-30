@@ -1,5 +1,5 @@
 import { ChangeEvent, Component, ReactNode, MouseEvent } from 'react';
-import { getPokemonData, getPokemonsData, PokemonData } from '../api/api';
+import { getPokemonsData, PokemonData, getQueryPokemonsData } from '../api/api';
 import '../styles/search-bar.css';
 
 type DataState = {
@@ -32,12 +32,14 @@ export default class SearchBar extends Component<Props> {
     }
   }
 
-  handleSearch() {
-    const query = this.state.query.toLowerCase();
+  handleSearch(term: string) {
+    const query = term.toLowerCase();
+
     this.setState({
       ...this.state,
       isPending: true,
     });
+
     if (query === '') {
       getPokemonsData()
         .then((data) => {
@@ -57,7 +59,7 @@ export default class SearchBar extends Component<Props> {
           });
         });
     } else {
-      getPokemonData(query)
+      getQueryPokemonsData(query)
         .then((data) => {
           this.setState({
             ...this.state,
@@ -65,7 +67,7 @@ export default class SearchBar extends Component<Props> {
           });
 
           this.props.setPokemonData({
-            pokemonData: [data],
+            pokemonData: data,
           });
         })
         .catch((/* err */) => {
@@ -76,7 +78,7 @@ export default class SearchBar extends Component<Props> {
         });
     }
 
-    localStorage.setItem('query', this.state.query);
+    localStorage.setItem('query', query);
   }
 
   handleFallback(e: MouseEvent) {
@@ -88,10 +90,11 @@ export default class SearchBar extends Component<Props> {
   }
 
   componentDidMount(): void {
-    const query = localStorage.getItem('query');
-    if (query) {
-      this.setState({ query });
-    }
+    let query = localStorage.getItem('query');
+    if (query === null) query = '';
+
+    this.handleSearch(query);
+    this.setState({ query });
   }
 
   render(): ReactNode {
@@ -106,7 +109,7 @@ export default class SearchBar extends Component<Props> {
         />
         <button
           className="search-bar__button"
-          onClick={() => this.handleSearch()}
+          onClick={() => this.handleSearch(this.state.query)}
           onContextMenu={(e) => this.handleFallback(e)}
         >
           Search

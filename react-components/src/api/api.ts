@@ -1,3 +1,5 @@
+import { findPokemons } from './local-search';
+
 const API_BASE_URL = 'https://pokeapi.co/api/v2/';
 
 type Stat = {
@@ -61,7 +63,7 @@ export async function getPokemon(
   throw new Error(`Status:${resp.status} - ${resp.statusText}`);
 }
 
-export async function getPokemonSpecies(
+async function getPokemonSpecies(
   term: string = ''
 ): Promise<PokemonSpecies | PokemonList> {
   const resp = await fetch(`${API_BASE_URL}pokemon-species/${term}`);
@@ -72,7 +74,7 @@ export async function getPokemonSpecies(
   throw new Error(`Status:${resp.status} - ${resp.statusText}`);
 }
 
-export async function getPokemonData(term: string): Promise<PokemonData> {
+async function getPokemonData(term: string): Promise<PokemonData> {
   const pokemon = await getPokemon(term);
   const pokemonSpecies = await getPokemonSpecies(term);
   const res = {
@@ -89,6 +91,19 @@ export async function getPokemonsData(): Promise<PokemonData[]> {
 
   for (const pokemon of pokemons) {
     res.push(getPokemonData(pokemon.name));
+  }
+
+  return Promise.all(res);
+}
+
+export async function getQueryPokemonsData(
+  term: string
+): Promise<PokemonData[]> {
+  const pokemonList = findPokemons(term);
+  const res = [];
+
+  for (const pokemon of pokemonList) {
+    res.push(getPokemonData(pokemon));
   }
 
   return Promise.all(res);
