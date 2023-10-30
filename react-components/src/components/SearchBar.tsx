@@ -13,6 +13,7 @@ type Props = {
 const initialValue = {
   query: '',
   hasError: false,
+  isPending: false,
 };
 
 export default class SearchBar extends Component<Props> {
@@ -33,18 +34,46 @@ export default class SearchBar extends Component<Props> {
 
   handleSearch() {
     const query = this.state.query.toLowerCase();
+    this.setState({
+      ...this.state,
+      isPending: true,
+    });
     if (query === '') {
-      getPokemonsData().then((data) => {
-        this.props.setPokemonData({
-          pokemonData: data,
+      getPokemonsData()
+        .then((data) => {
+          this.setState({
+            ...this.state,
+            isPending: false,
+          });
+
+          this.props.setPokemonData({
+            pokemonData: data,
+          });
+        })
+        .catch((/* err */) => {
+          this.setState({
+            ...this.state,
+            isPending: false,
+          });
         });
-      });
     } else {
-      getPokemonData(query).then((data) => {
-        this.props.setPokemonData({
-          pokemonData: [data],
+      getPokemonData(query)
+        .then((data) => {
+          this.setState({
+            ...this.state,
+            isPending: false,
+          });
+
+          this.props.setPokemonData({
+            pokemonData: [data],
+          });
+        })
+        .catch((/* err */) => {
+          this.setState({
+            ...this.state,
+            isPending: false,
+          });
         });
-      });
     }
 
     localStorage.setItem('query', this.state.query);
@@ -82,6 +111,7 @@ export default class SearchBar extends Component<Props> {
         >
           Search
         </button>
+        {this.state.isPending ? <div className="loader"></div> : ''}
       </div>
     );
   }
