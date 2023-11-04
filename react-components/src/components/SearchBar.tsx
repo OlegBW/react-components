@@ -1,13 +1,9 @@
 import { ChangeEvent, Component, ReactNode, MouseEvent } from 'react';
-import { getPokemonsData, PokemonData, getQueryPokemonsData } from '../api/api';
+import { getCards, RequestQuery, CardsPage } from '../api/api';
 import '../styles/search-bar.css';
 
-type DataState = {
-  pokemonData: PokemonData[];
-};
-
 type Props = {
-  setPokemonData: (state: DataState) => void;
+  setPokemonData: (state: CardsPage) => void;
 };
 
 const initialValue = {
@@ -32,7 +28,7 @@ export default class SearchBar extends Component<Props> {
     }
   }
 
-  handleSearch(term: string) {
+  async handleSearch(term: string) {
     const query = term.toLowerCase();
 
     this.setState({
@@ -40,42 +36,28 @@ export default class SearchBar extends Component<Props> {
       isPending: true,
     });
 
-    if (query === '') {
-      getPokemonsData()
-        .then((data) => {
-          this.setState({
-            ...this.state,
-            isPending: false,
-          });
+    const queryObj = {} as RequestQuery;
 
-          this.props.setPokemonData({
-            pokemonData: data,
-          });
-        })
-        .catch((/* err */) => {
-          this.setState({
-            ...this.state,
-            isPending: false,
-          });
-        });
-    } else {
-      getQueryPokemonsData(query)
-        .then((data) => {
-          this.setState({
-            ...this.state,
-            isPending: false,
-          });
+    if (query) {
+      queryObj['q'] = `name:${query}*`;
+    }
 
-          this.props.setPokemonData({
-            pokemonData: data,
-          });
-        })
-        .catch((/* err */) => {
-          this.setState({
-            ...this.state,
-            isPending: false,
-          });
-        });
+    try {
+      const cards = await getCards(queryObj);
+
+      this.setState({
+        ...this.state,
+        isPending: false,
+      });
+
+      this.props.setPokemonData({
+        ...cards,
+      });
+    } catch (err) {
+      this.setState({
+        ...this.state,
+        isPending: false,
+      });
     }
 
     localStorage.setItem('query', query);

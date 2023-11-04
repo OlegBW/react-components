@@ -3,7 +3,12 @@ import CardsList from './CardsList';
 import SearchBar from './SearchBar';
 
 const initialState = {
-  pokemonData: [],
+  data: [],
+  name: '',
+  images: {
+    small: '',
+    large: '',
+  },
 };
 
 export default class SearchPage extends Component {
@@ -15,10 +20,11 @@ export default class SearchPage extends Component {
   }
 
   render(): ReactNode {
+    console.log(this.state.data);
     return (
       <div className="search-page">
         <SearchBar setPokemonData={this.setState} />
-        <CardsList pokemonData={this.state.pokemonData} />
+        <CardsList pokemonData={this.state.data} />
       </div>
     );
   }

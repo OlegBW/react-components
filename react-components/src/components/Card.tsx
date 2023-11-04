@@ -3,7 +3,6 @@ import '../styles/card.css';
 
 type Props = {
   title: string;
-  desc: string;
   img: string;
 };
 
@@ -19,9 +18,6 @@ export default class Card extends Component<Props> {
         <div className="pokemon-card__img-wrapper">
           <img src={this.props.img} alt="" className="pokemon-card__img" />
         </div>
-        <p className="pokemon-card__desc">
-          {this.props.desc.replaceAll('', '')}
-        </p>
       </div>
     );
   }

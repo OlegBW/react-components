@@ -1,110 +1,59 @@
-import { findPokemons } from './local-search';
+const API_KEY = '990a7910-7099-4459-8238-fc39b0d4d6ee';
+const API_BASE_URL = 'https://api.pokemontcg.io/v2/cards';
 
-const API_BASE_URL = 'https://pokeapi.co/api/v2/';
-
-type Stat = {
-  base_stat: number;
-  effort: number;
-  stat: {
-    name: string;
-  };
+export type RequestQuery = {
+  q?: string;
+  page?: number;
+  pageSize?: number;
+  orderBy?: string;
+  select?: string;
 };
 
-type Stats = Stat[];
-
-type Sprites = {
-  other: {
-    'official-artwork': {
-      front_default: string;
-    };
-  };
-};
-
-type Pokemon = {
-  id: number;
+export type PokemonCard = {
+  id: string;
   name: string;
-  sprites: Sprites;
-  stats: Stats;
-};
-
-type FlavorText = {
-  flavor_text: string;
-  language: {
-    name: string;
+  images: {
+    small: string;
+    large: string;
   };
 };
 
-type PokemonSpecies = {
-  flavor_text_entries: FlavorText[];
-};
-
-export type PokemonData = Pokemon & PokemonSpecies;
-
-type PokemonListItem = {
-  name: string;
-  url: string;
-};
-
-type PokemonList = {
+export type CardsPage = {
+  data: PokemonCard[];
+  page: number;
+  pageSize: number;
   count: number;
-  next: string;
-  previous: string | null;
-  results: PokemonListItem[];
+  totalCount: number;
 };
 
-export async function getPokemon(
-  term: string = ''
-): Promise<Pokemon | PokemonList> {
-  const resp = await fetch(`${API_BASE_URL}pokemon/${term}`);
-  if (resp.ok) {
-    return resp.json();
+function parseUrl(base: string, query: RequestQuery): string {
+  const url = new URL(base);
+  for (const [k, v] of Object.entries(query)) {
+    url.searchParams.set(k, typeof v === 'string' ? v : String(v));
   }
-
-  throw new Error(`Status:${resp.status} - ${resp.statusText}`);
+  return String(url);
 }
 
-async function getPokemonSpecies(
-  term: string = ''
-): Promise<PokemonSpecies | PokemonList> {
-  const resp = await fetch(`${API_BASE_URL}pokemon-species/${term}`);
-  if (resp.ok) {
-    return resp.json();
-  }
-
-  throw new Error(`Status:${resp.status} - ${resp.statusText}`);
-}
-
-async function getPokemonData(term: string): Promise<PokemonData> {
-  const pokemon = await getPokemon(term);
-  const pokemonSpecies = await getPokemonSpecies(term);
-  const res = {
-    ...(pokemon as Pokemon),
-    ...(pokemonSpecies as PokemonSpecies),
+export async function getCards(query: RequestQuery): Promise<CardsPage> {
+  // Temporary
+  query = {
+    ...query,
+    pageSize: 20,
+    page: 1,
   };
-  return res;
-}
 
-export async function getPokemonsData(): Promise<PokemonData[]> {
-  const pokemonList = (await getPokemon()) as PokemonList;
-  const pokemons = pokemonList.results;
-  const res = [];
+  const url = parseUrl(API_BASE_URL, query);
 
-  for (const pokemon of pokemons) {
-    res.push(getPokemonData(pokemon.name));
+  const resp = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'X-Api-Key': API_KEY,
+    },
+  });
+
+  if (resp.ok) {
+    return resp.json();
   }
 
-  return Promise.all(res);
-}
-
-export async function getQueryPokemonsData(
-  term: string
-): Promise<PokemonData[]> {
-  const pokemonList = findPokemons(term);
-  const res = [];
-
-  for (const pokemon of pokemonList) {
-    res.push(getPokemonData(pokemon));
-  }
-
-  return Promise.all(res);
+  throw new Error(`Status:${resp.status} - ${resp.statusText}`);
 }

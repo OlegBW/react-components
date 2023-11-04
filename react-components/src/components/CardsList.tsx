@@ -1,5 +1,5 @@
 import { Component, ReactNode } from 'react';
-import { PokemonData } from '../api/api';
+import { PokemonCard } from '../api/api';
 import Card from './Card';
 import '../styles/card-list.css';
 
@@ -7,17 +7,8 @@ function capitalize(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-function findDesc(pokemon: PokemonData): string {
-  for (const text of pokemon.flavor_text_entries) {
-    if (text.language.name === 'en') {
-      return text.flavor_text;
-    }
-  }
-  return '';
-}
-
 type Props = {
-  pokemonData: PokemonData[];
+  pokemonData: PokemonCard[];
 };
 
 export default class CardsList extends Component<Props> {
@@ -33,8 +24,7 @@ export default class CardsList extends Component<Props> {
             <Card
               key={pokemon.id}
               title={capitalize(pokemon.name)}
-              desc={findDesc(pokemon)}
-              img={pokemon.sprites.other['official-artwork'].front_default}
+              img={pokemon.images.large}
             />
           );
         })}
