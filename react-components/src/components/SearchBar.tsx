@@ -1,4 +1,5 @@
-import { ChangeEvent, Component, ReactNode, MouseEvent } from 'react';
+import { useState, useEffect } from 'react';
+import { ChangeEvent, MouseEvent } from 'react';
 import { getCards, RequestQuery, CardsPage } from '../api/api';
 import '../styles/search-bar.css';
 
@@ -12,28 +13,36 @@ const initialValue = {
   isPending: false,
 };
 
-export default class SearchBar extends Component<Props> {
-  state = initialValue;
+export default function SearchBar({ setPokemonData }: Props) {
+  const [state, setState] = useState(initialValue);
 
-  constructor(props: Props) {
-    super(props);
-  }
+  useEffect(() => {
+    let query = localStorage.getItem('query');
+    if (query === null) query = '';
 
-  handleChange(e: ChangeEvent) {
+    handleSearch(query);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function handleChange(e: ChangeEvent) {
     const target = e.target;
     if (target && target instanceof HTMLInputElement) {
-      this.setState({
+      setState({
+        ...state,
         query: target.value,
       });
     }
   }
 
-  async handleSearch(term: string) {
+  async function handleSearch(term: string) {
     const query = term.toLowerCase();
 
-    this.setState({
-      ...this.state,
-      isPending: true,
+    setState((prevState) => {
+      return {
+        ...prevState,
+        query,
+        isPending: true,
+      };
     });
 
     const queryObj = {} as RequestQuery;
@@ -45,59 +54,56 @@ export default class SearchBar extends Component<Props> {
     try {
       const cards = await getCards(queryObj);
 
-      this.setState({
-        ...this.state,
-        isPending: false,
+      setState((prevState) => {
+        return {
+          ...prevState,
+          isPending: false,
+        };
       });
 
-      this.props.setPokemonData({
+      setPokemonData({
         ...cards,
       });
     } catch (err) {
-      this.setState({
-        ...this.state,
-        isPending: false,
+      setState((prevState) => {
+        return {
+          ...prevState,
+          isPending: false,
+        };
       });
     }
 
     localStorage.setItem('query', query);
   }
 
-  handleFallback(e: MouseEvent) {
-    this.setState({
-      ...this.state,
+  function handleFallback(e: MouseEvent) {
+    setState({
+      ...state,
       hasError: true,
     });
     e.preventDefault();
   }
 
-  componentDidMount(): void {
-    let query = localStorage.getItem('query');
-    if (query === null) query = '';
+  if (state.hasError) throw new Error('Fallback');
 
-    this.handleSearch(query);
-    this.setState({ query });
-  }
+  console.log(`render search`, state);
 
-  render(): ReactNode {
-    if (this.state.hasError) throw new Error('Fallback');
-    return (
-      <div className="search-bar">
-        <input
-          className="search-bar__input"
-          onChange={(e) => this.handleChange(e)}
-          type="text"
-          value={this.state.query}
-        />
-        <button
-          className="search-bar__button"
-          onClick={() => this.handleSearch(this.state.query)}
-          onContextMenu={(e) => this.handleFallback(e)}
-        >
-          Search
-        </button>
-        {this.state.isPending ? <div className="loader"></div> : ''}
-      </div>
-    );
-  }
+  return (
+    <div className="search-bar">
+      <input
+        className="search-bar__input"
+        onChange={(e) => handleChange(e)}
+        type="text"
+        value={state.query}
+      />
+      <button
+        className="search-bar__button"
+        onClick={() => handleSearch(state.query)}
+        onContextMenu={(e) => handleFallback(e)}
+      >
+        Search
+      </button>
+      {state.isPending ? <div className="loader"></div> : ''}
+    </div>
+  );
 }

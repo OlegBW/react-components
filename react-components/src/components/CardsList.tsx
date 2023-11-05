@@ -1,4 +1,3 @@
-import { Component, ReactNode } from 'react';
 import { PokemonCard } from '../api/api';
 import Card from './Card';
 import '../styles/card-list.css';
@@ -11,24 +10,18 @@ type Props = {
   pokemonData: PokemonCard[];
 };
 
-export default class CardsList extends Component<Props> {
-  constructor(props: Props) {
-    super(props);
-  }
-
-  render(): ReactNode {
-    return (
-      <div className="card-list">
-        {this.props.pokemonData.map((pokemon) => {
-          return (
-            <Card
-              key={pokemon.id}
-              title={capitalize(pokemon.name)}
-              img={pokemon.images.large}
-            />
-          );
-        })}
-      </div>
-    );
-  }
+export default function CardsList({ pokemonData }: Props) {
+  return (
+    <div className="card-list">
+      {pokemonData.map((pokemon) => {
+        return (
+          <Card
+            key={pokemon.id}
+            title={capitalize(pokemon.name)}
+            img={pokemon.images.large}
+          />
+        );
+      })}
+    </div>
+  );
 }

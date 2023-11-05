@@ -1,31 +1,23 @@
-import { Component, ReactNode } from 'react';
+import { useState } from 'react';
+import { CardsPage, PokemonCard } from '../api/api';
 import CardsList from './CardsList';
 import SearchBar from './SearchBar';
 
 const initialState = {
-  data: [],
-  name: '',
-  images: {
-    small: '',
-    large: '',
-  },
+  data: [] as PokemonCard[],
+  page: 1,
+  pageSize: 20,
+  count: 0,
+  totalCount: 0,
 };
 
-export default class SearchPage extends Component {
-  state = initialState;
+export default function SearchPage() {
+  const [state, setState] = useState(initialState as CardsPage);
 
-  constructor(props: object) {
-    super(props);
-    this.setState = this.setState.bind(this);
-  }
-
-  render(): ReactNode {
-    console.log(this.state.data);
-    return (
-      <div className="search-page">
-        <SearchBar setPokemonData={this.setState} />
-        <CardsList pokemonData={this.state.data} />
-      </div>
-    );
-  }
+  return (
+    <div className="search-page">
+      <SearchBar setPokemonData={(state) => setState(state)} />
+      <CardsList pokemonData={state.data} />
+    </div>
+  );
 }
