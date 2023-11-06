@@ -5,6 +5,8 @@ import {
   RouterProvider,
   createRoutesFromElements,
   Route,
+  Navigate,
+  Outlet,
 } from 'react-router-dom';
 
 import SearchPage from './components/SearchPage';
@@ -17,34 +19,43 @@ import './index.css';
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route
-      element={<SearchPage />}
-      path="/cards/:page"
-      loader={async ({ params, request }) => {
-        const { page } = params;
-        const url = new URL(request.url);
-        const searchTerm = url.searchParams.get('q');
-
-        const reqObj: RequestQuery = { page: Number(page) };
-        if (searchTerm) {
-          reqObj['q'] = `name:${searchTerm}*`;
-        }
-
-        const cards = await getCards(reqObj);
-        console.log('loader', cards);
-        return cards;
-      }}
+      path="/"
+      element={
+        <>
+          <Navigate to="cards/1" />
+          <Outlet />
+        </>
+      }
     >
       <Route
-        path="details/:detailId"
-        loader={async ({ params }) => {
-          const { detailId } = params;
-          if (!detailId) return;
+        element={<SearchPage />}
+        path="/cards/:page"
+        loader={async ({ params, request }) => {
+          const { page } = params;
+          const url = new URL(request.url);
+          const searchTerm = url.searchParams.get('q');
 
-          const card = await getCard(detailId);
-          return card;
+          const reqObj: RequestQuery = { page: Number(page) };
+          if (searchTerm) {
+            reqObj['q'] = `name:${searchTerm}*`;
+          }
+
+          const cards = await getCards(reqObj);
+          return cards;
         }}
-        element={<Details />}
-      ></Route>
+      >
+        <Route
+          path="details/:detailId"
+          loader={async ({ params }) => {
+            const { detailId } = params;
+            if (!detailId) return;
+
+            const card = await getCard(detailId);
+            return card;
+          }}
+          element={<Details />}
+        ></Route>
+      </Route>
     </Route>
   )
 );
