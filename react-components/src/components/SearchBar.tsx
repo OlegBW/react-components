@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ChangeEvent, MouseEvent } from 'react';
 import '../styles/search-bar.css';
-import { useNavigate, useNavigation } from 'react-router-dom';
+import { useNavigate, useNavigation, useSearchParams } from 'react-router-dom';
 
 const initialValue = {
   query: '',
@@ -13,6 +13,7 @@ export default function SearchBar() {
   const [state, setState] = useState(initialValue);
   const navigate = useNavigate();
   const navigation = useNavigation();
+  const [params] = useSearchParams();
 
   useEffect(() => {
     let query = localStorage.getItem('query');
@@ -23,7 +24,9 @@ export default function SearchBar() {
       query,
     });
 
-    navigate(`../1?q=${query}`, { relative: 'path' });
+    params.set('q', query);
+
+    navigate(`/cards/1?${params.toString()}`, { relative: 'path' });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -39,8 +42,9 @@ export default function SearchBar() {
 
   async function handleSearch(term: string) {
     const query = term.toLowerCase();
+    params.set('q', query);
 
-    navigate(`../1?q=${query}`, { relative: 'path' });
+    navigate(`../1?${params.toString()}`, { relative: 'path' });
 
     localStorage.setItem('query', query);
   }

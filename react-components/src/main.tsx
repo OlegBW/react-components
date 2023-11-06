@@ -34,10 +34,15 @@ const router = createBrowserRouter(
           const { page } = params;
           const url = new URL(request.url);
           const searchTerm = url.searchParams.get('q');
+          const size = url.searchParams.get('size');
 
           const reqObj: RequestQuery = { page: Number(page) };
           if (searchTerm) {
             reqObj['q'] = `name:${searchTerm}*`;
+          }
+
+          if (size) {
+            reqObj['pageSize'] = Number(size);
           }
 
           const cards = await getCards(reqObj);

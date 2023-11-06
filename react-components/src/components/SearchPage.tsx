@@ -2,6 +2,7 @@ import { CardsPage } from '../api/api';
 import CardsList from './CardsList';
 import SearchBar from './SearchBar';
 import Pagination from './Pagination';
+import PageSize from './PageSize';
 import {
   useLoaderData,
   Outlet,
@@ -25,6 +26,7 @@ export default function SearchPage() {
     <div className="search-wrapper" onClick={() => handleNavigate()}>
       <div className="search-page">
         <SearchBar />
+        <PageSize></PageSize>
         <CardsList pokemonData={cards.data} />
         <Pagination
           currentPage={cards.page}

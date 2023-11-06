@@ -12,13 +12,16 @@ export default function Pagination({ currentPage, lastPage }: Props) {
   return (
     <div className="pagination">
       <button className="pagination__btn">
-        <NavLink to={`../1?${params.toString()}`} relative="path">
+        <NavLink
+          to={{ pathname: '../1', search: params.toString() }}
+          relative="path"
+        >
           First
         </NavLink>
       </button>
       <button className="pagination__btn">
         <NavLink
-          to={`../${currentPage - 1}?${params.toString()}`}
+          to={{ pathname: `../${currentPage - 1}`, search: params.toString() }}
           relative="path"
         >
           Prev
@@ -27,14 +30,17 @@ export default function Pagination({ currentPage, lastPage }: Props) {
       <button className="pagination__btn">{currentPage}</button>
       <button className="pagination__btn">
         <NavLink
-          to={`../${currentPage + 1}?${params.toString()}`}
+          to={{ pathname: `../${currentPage + 1}`, search: params.toString() }}
           relative="path"
         >
           Next
         </NavLink>
       </button>
       <button className="pagination__btn">
-        <NavLink to={`../${lastPage}?${params.toString()}`} relative="path">
+        <NavLink
+          to={{ pathname: `../${lastPage}`, search: params.toString() }}
+          relative="path"
+        >
           Last
         </NavLink>
       </button>

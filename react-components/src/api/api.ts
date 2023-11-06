@@ -55,12 +55,7 @@ export async function getCard(id: string): Promise<PokemonCard> {
 }
 
 export async function getCards(query: RequestQuery): Promise<CardsPage> {
-  // Temporary
-  query = {
-    ...query,
-    pageSize: 20,
-    // page: 1,
-  };
+  if (!query.pageSize) query.pageSize = 20;
 
   const url = parseUrl(API_BASE_URL, query);
 
