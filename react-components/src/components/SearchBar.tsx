@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ChangeEvent, MouseEvent } from 'react';
 import '../styles/search-bar.css';
-import { useSearchParams, useNavigation } from 'react-router-dom';
+import { useNavigate, useNavigation } from 'react-router-dom';
 
 const initialValue = {
   query: '',
@@ -11,10 +11,9 @@ const initialValue = {
 
 export default function SearchBar() {
   const [state, setState] = useState(initialValue);
-  const [, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const navigation = useNavigation();
 
-  // Зчитуємо збережені дані і оновлюємо сторінку
   useEffect(() => {
     let query = localStorage.getItem('query');
     if (query === null) query = '';
@@ -24,11 +23,10 @@ export default function SearchBar() {
       query,
     });
 
-    setSearchParams({ q: query });
+    navigate(`../1?q=${query}`, { relative: 'path' });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Оновлюю стан компонента в залежності від вводу
   function handleChange(e: ChangeEvent) {
     const target = e.target;
     if (target && target instanceof HTMLInputElement) {
@@ -39,11 +37,10 @@ export default function SearchBar() {
     }
   }
 
-  // Ініціюю пошук, оновлюю локальне сховище
   async function handleSearch(term: string) {
     const query = term.toLowerCase();
 
-    setSearchParams({ q: query });
+    navigate(`../1?q=${query}`, { relative: 'path' });
 
     localStorage.setItem('query', query);
   }
