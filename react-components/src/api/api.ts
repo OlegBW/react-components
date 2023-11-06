@@ -16,6 +16,9 @@ export type PokemonCard = {
     small: string;
     large: string;
   };
+  flavorText: string;
+  evolvesTo?: string[];
+  evolvesFrom?: string;
 };
 
 export type CardsPage = {
@@ -34,12 +37,29 @@ function parseUrl(base: string, query: RequestQuery): string {
   return String(url);
 }
 
+export async function getCard(id: string): Promise<PokemonCard> {
+  const url = `${API_BASE_URL}/${id}`;
+
+  const resp = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'X-Api-Key': API_KEY,
+    },
+  });
+
+  if (resp.ok) {
+    return resp.json();
+  }
+
+  throw new Error(`Status:${resp.status} - ${resp.statusText}`);
+}
+
 export async function getCards(query: RequestQuery): Promise<CardsPage> {
   // Temporary
   query = {
     ...query,
     pageSize: 20,
-    page: 1,
+    // page: 1,
   };
 
   const url = parseUrl(API_BASE_URL, query);

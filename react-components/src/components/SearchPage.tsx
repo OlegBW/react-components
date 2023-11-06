@@ -1,23 +1,37 @@
-import { useState } from 'react';
-import { CardsPage, PokemonCard } from '../api/api';
+import { CardsPage } from '../api/api';
 import CardsList from './CardsList';
 import SearchBar from './SearchBar';
-
-const initialState = {
-  data: [] as PokemonCard[],
-  page: 1,
-  pageSize: 20,
-  count: 0,
-  totalCount: 0,
-};
+import Pagination from './Pagination';
+import {
+  useLoaderData,
+  Outlet,
+  useNavigate,
+  useSearchParams,
+} from 'react-router-dom';
+import '../styles/search-page.css';
 
 export default function SearchPage() {
-  const [state, setState] = useState(initialState as CardsPage);
+  const cards = useLoaderData() as CardsPage;
+  const navigate = useNavigate();
+  const [params] = useSearchParams();
+
+  function handleNavigate() {
+    const url = window.location;
+    if (!url.href.includes('details')) return;
+    navigate(`../../?${params.toString()}`, { relative: 'path' });
+  }
 
   return (
-    <div className="search-page">
-      <SearchBar setPokemonData={(state) => setState(state)} />
-      <CardsList pokemonData={state.data} />
+    <div className="search-wrapper" onClick={() => handleNavigate()}>
+      <div className="search-page">
+        <SearchBar />
+        <CardsList pokemonData={cards.data} />
+        <Pagination
+          currentPage={cards.page}
+          lastPage={Math.ceil(cards.totalCount / cards.pageSize)}
+        />
+      </div>
+      <Outlet></Outlet>
     </div>
   );
 }

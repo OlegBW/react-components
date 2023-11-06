@@ -18,7 +18,8 @@ export default function CardsList({ pokemonData }: Props) {
           <Card
             key={pokemon.id}
             title={capitalize(pokemon.name)}
-            img={pokemon.images.large}
+            img={pokemon.images.small}
+            id={pokemon.id}
           />
         );
       })}

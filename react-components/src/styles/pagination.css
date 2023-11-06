@@ -1,0 +1,26 @@
+.pagination{
+    display: flex;
+}
+
+.pagination__btn:not(:last-child) {
+    margin: 0px 10px 0px 0px;
+    color: white;
+}
+
+.pagination__btn a{
+    font-size: 1.2rem;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.pagination__btn{
+    box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.3);
+    transition-duration: 0.3s;
+}
+
+.pagination__btn:hover{
+    box-shadow: 0px 0px 7px rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition-duration: 0.3s;
+}

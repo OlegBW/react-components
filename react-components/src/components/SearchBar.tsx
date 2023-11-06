@@ -1,11 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ChangeEvent, MouseEvent } from 'react';
-import { getCards, RequestQuery, CardsPage } from '../api/api';
 import '../styles/search-bar.css';
-
-type Props = {
-  setPokemonData: (state: CardsPage) => void;
-};
+import { useSearchParams, useNavigation } from 'react-router-dom';
 
 const initialValue = {
   query: '',
@@ -13,17 +9,26 @@ const initialValue = {
   isPending: false,
 };
 
-export default function SearchBar({ setPokemonData }: Props) {
+export default function SearchBar() {
   const [state, setState] = useState(initialValue);
+  const [, setSearchParams] = useSearchParams();
+  const navigation = useNavigation();
 
+  // Зчитуємо збережені дані і оновлюємо сторінку
   useEffect(() => {
     let query = localStorage.getItem('query');
     if (query === null) query = '';
 
-    handleSearch(query);
+    setState({
+      ...state,
+      query,
+    });
+
+    setSearchParams({ q: query });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Оновлюю стан компонента в залежності від вводу
   function handleChange(e: ChangeEvent) {
     const target = e.target;
     if (target && target instanceof HTMLInputElement) {
@@ -34,44 +39,11 @@ export default function SearchBar({ setPokemonData }: Props) {
     }
   }
 
+  // Ініціюю пошук, оновлюю локальне сховище
   async function handleSearch(term: string) {
     const query = term.toLowerCase();
 
-    setState((prevState) => {
-      return {
-        ...prevState,
-        query,
-        isPending: true,
-      };
-    });
-
-    const queryObj = {} as RequestQuery;
-
-    if (query) {
-      queryObj['q'] = `name:${query}*`;
-    }
-
-    try {
-      const cards = await getCards(queryObj);
-
-      setState((prevState) => {
-        return {
-          ...prevState,
-          isPending: false,
-        };
-      });
-
-      setPokemonData({
-        ...cards,
-      });
-    } catch (err) {
-      setState((prevState) => {
-        return {
-          ...prevState,
-          isPending: false,
-        };
-      });
-    }
+    setSearchParams({ q: query });
 
     localStorage.setItem('query', query);
   }
@@ -85,8 +57,6 @@ export default function SearchBar({ setPokemonData }: Props) {
   }
 
   if (state.hasError) throw new Error('Fallback');
-
-  console.log(`render search`, state);
 
   return (
     <div className="search-bar">
@@ -103,7 +73,7 @@ export default function SearchBar({ setPokemonData }: Props) {
       >
         Search
       </button>
-      {state.isPending ? <div className="loader"></div> : ''}
+      {navigation.state === 'loading' ? <div className="loader"></div> : ''}
     </div>
   );
 }
