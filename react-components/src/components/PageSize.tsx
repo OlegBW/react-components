@@ -1,15 +1,16 @@
 import { MouseEvent } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import '../styles/page-size.css';
 
 export default function PageSize() {
-  const [params, setParams] = useSearchParams();
+  const [params] = useSearchParams();
+  const navigate = useNavigate();
 
   function handleClick(e: MouseEvent) {
     const btn = e.target as HTMLButtonElement;
     if (!btn.textContent) return;
-    const prev = Object.fromEntries(params);
-    setParams({ ...prev, size: btn.textContent });
+    params.set('size', btn.textContent);
+    navigate(`../1?${params.toString()}`, { relative: 'path' });
   }
 
   return (
