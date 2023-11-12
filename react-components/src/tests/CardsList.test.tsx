@@ -8,7 +8,7 @@ import { PageContext } from '../contexts';
 import '@testing-library/jest-dom';
 // import { CardsPage } from '../api/api';
 import { MemoryRouter } from 'react-router-dom';
-import { mockCardsPage } from './mocks/CardsPage';
+import { mockCardsPage, emptyCardsPage } from './mocks/CardsPage';
 
 it('Cards list renders the specified number of cards', () => {
   const { container } = render(
@@ -20,4 +20,17 @@ it('Cards list renders the specified number of cards', () => {
   );
   const cardsCount = container.querySelectorAll('.pokemon-card').length;
   expect(cardsCount).toBe(4);
+});
+
+it('An appropriate message is displayed if no cards are present', () => {
+  const { container } = render(
+    <MemoryRouter initialEntries={['/cards/1']}>
+      <PageContext.Provider value={emptyCardsPage}>
+        <CardsList />
+      </PageContext.Provider>
+    </MemoryRouter>
+  );
+  const message = container.querySelector('.not-found__msg');
+  const messageContent = message?.textContent;
+  expect(messageContent === 'Not found').toBeTruthy();
 });

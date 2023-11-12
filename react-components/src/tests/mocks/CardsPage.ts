@@ -54,3 +54,11 @@ export const mockCardsPage: CardsPage = {
   count: 4,
   totalCount: 100, // Assuming there are 100 Pokemon cards in total
 };
+
+export const emptyCardsPage: CardsPage = {
+  data: [],
+  page: 1,
+  pageSize: 20,
+  count: 0,
+  totalCount: 100, // Assuming there are 100 Pokemon cards in total
+};

@@ -3,8 +3,10 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  width: 100%;
 }
 
 .search-wrapper{
   display: flex;
+  width: 100%;
 }

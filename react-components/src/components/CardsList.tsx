@@ -12,6 +12,10 @@ export default function CardsList() {
   const pageData = useContext(PageContext);
   const pokemonData = pageData.data;
 
+  if (!(pokemonData.length > 0)) {
+    return <div className="not-found__msg">Not found</div>;
+  }
+
   return (
     <div className="card-list">
       {pokemonData.map((pokemon) => {

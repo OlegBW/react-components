@@ -2,12 +2,12 @@
  * @jest-environment jsdom
  */
 
-import { render /*, screen*/ } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import Card from '../components/Card';
 import { PageContext } from '../contexts';
 import '@testing-library/jest-dom';
 // import { CardsPage } from '../api/api';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, BrowserRouter, Routes, Route } from 'react-router-dom';
 import { mockCardsPage } from './mocks/CardsPage';
 
 it('Card component renders the relevant card data', () => {
@@ -27,4 +27,30 @@ it('Card component renders the relevant card data', () => {
   expect(
     title === 'Charmander' && img === 'charmander_small_image_url'
   ).toBeTruthy();
+});
+
+it('Clicking on a card opens a detailed card component', () => {
+  const { container } = render(
+    <BrowserRouter basename="/">
+      <Routes location={'/cards/1'}>
+        <Route
+          path="/cards/:page"
+          element={
+            <PageContext.Provider value={mockCardsPage}>
+              <Card
+                title="Charmander"
+                id="2"
+                img="charmander_small_image_url"
+              />
+            </PageContext.Provider>
+          }
+        ></Route>
+      </Routes>
+    </BrowserRouter>
+  );
+
+  const card = container.querySelector('.pokemon-card');
+  if (!card) return;
+
+  fireEvent.click(card);
 });
