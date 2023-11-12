@@ -1,12 +1,12 @@
+import { useContext } from 'react';
 import '../styles/pagination.css';
 import { NavLink, useSearchParams } from 'react-router-dom';
+import { PageContext } from '../contexts';
 
-type Props = {
-  currentPage: number;
-  lastPage: number;
-};
-
-export default function Pagination({ currentPage, lastPage }: Props) {
+export default function Pagination() {
+  const pageData = useContext(PageContext);
+  const currentPage = pageData.page;
+  const lastPage = Math.ceil(pageData.totalCount / pageData.pageSize);
   const [params] = useSearchParams();
 
   return (

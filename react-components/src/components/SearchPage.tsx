@@ -10,6 +10,7 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 import '../styles/search-page.css';
+import { PageContext } from '../contexts';
 
 export default function SearchPage() {
   const cards = useLoaderData() as CardsPage;
@@ -26,12 +27,11 @@ export default function SearchPage() {
     <div className="search-wrapper" onClick={() => handleNavigate()}>
       <div className="search-page">
         <SearchBar />
-        <PageSize></PageSize>
-        <CardsList pokemonData={cards.data} />
-        <Pagination
-          currentPage={cards.page}
-          lastPage={Math.ceil(cards.totalCount / cards.pageSize)}
-        />
+        <PageSize />
+        <PageContext.Provider value={cards}>
+          <CardsList />
+          <Pagination />
+        </PageContext.Provider>
       </div>
       <Outlet></Outlet>
     </div>

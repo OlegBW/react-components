@@ -1,16 +1,17 @@
-import { PokemonCard } from '../api/api';
+import { useContext } from 'react';
+// import { PokemonCard } from '../api/api';
 import Card from './Card';
 import '../styles/card-list.css';
+import { PageContext } from '../contexts';
 
 function capitalize(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-type Props = {
-  pokemonData: PokemonCard[];
-};
+export default function CardsList() {
+  const pageData = useContext(PageContext);
+  const pokemonData = pageData.data;
 
-export default function CardsList({ pokemonData }: Props) {
   return (
     <div className="card-list">
       {pokemonData.map((pokemon) => {
