@@ -3,4 +3,3 @@
 
 cd react-components
 npm run test
-exit 1
