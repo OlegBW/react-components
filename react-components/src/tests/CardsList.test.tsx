@@ -13,7 +13,7 @@ import { mockCardsPage, emptyCardsPage } from './mocks/CardsPage';
 it('Cards list renders the specified number of cards', () => {
   const { container } = render(
     <MemoryRouter initialEntries={['/cards/1']}>
-      <PageContext.Provider value={mockCardsPage}>
+      <PageContext.Provider value={{ page: mockCardsPage, query: '' }}>
         <CardsList />
       </PageContext.Provider>
     </MemoryRouter>
@@ -25,7 +25,7 @@ it('Cards list renders the specified number of cards', () => {
 it('An appropriate message is displayed if no cards are present', () => {
   const { container } = render(
     <MemoryRouter initialEntries={['/cards/1']}>
-      <PageContext.Provider value={emptyCardsPage}>
+      <PageContext.Provider value={{ page: emptyCardsPage, query: '' }}>
         <CardsList />
       </PageContext.Provider>
     </MemoryRouter>
