@@ -1,5 +1,12 @@
 import { createContext } from 'react';
 import { CardsPage } from './api/api';
 
-export const SearchContext = createContext('');
-export const PageContext = createContext({} as CardsPage);
+type initialContext = {
+  page: CardsPage;
+  query: string;
+};
+
+export const PageContext = createContext({
+  page: {},
+  query: '',
+} as initialContext);

@@ -4,7 +4,7 @@ import { NavLink, useSearchParams } from 'react-router-dom';
 import { PageContext } from '../contexts';
 
 export default function Pagination() {
-  const pageData = useContext(PageContext);
+  const pageData = useContext(PageContext).page;
   const currentPage = pageData.page;
   const lastPage = Math.ceil(pageData.totalCount / pageData.pageSize);
   const [params] = useSearchParams();

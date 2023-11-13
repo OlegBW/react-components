@@ -6,7 +6,6 @@ import { render, fireEvent } from '@testing-library/react';
 import Card from '../components/Card';
 import { PageContext } from '../contexts';
 import '@testing-library/jest-dom';
-// import { CardsPage } from '../api/api';
 import { MemoryRouter, BrowserRouter, Routes, Route } from 'react-router-dom';
 import { mockCardsPage } from './mocks/CardsPage';
 

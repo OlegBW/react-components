@@ -43,7 +43,6 @@ it('The pagination component updates URL query parameter when page changes', () 
 
   const nextBtn = container.querySelector('#next-page-link');
   if (!nextBtn) return;
-  console.log(window.location.href, nextBtn);
   fireEvent.click(nextBtn);
   expect(true).toBeTruthy();
 });

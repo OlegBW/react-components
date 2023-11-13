@@ -28,7 +28,12 @@ export default function SearchPage() {
       <div className="search-page">
         <SearchBar />
         <PageSize />
-        <PageContext.Provider value={cards}>
+        <PageContext.Provider
+          value={{
+            page: cards,
+            query: params.get('search') ?? '',
+          }}
+        >
           <CardsList />
           <Pagination />
         </PageContext.Provider>
