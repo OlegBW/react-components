@@ -12,7 +12,7 @@ import { mockCardsPage } from './mocks/CardsPage';
 it('Card component renders the relevant card data', () => {
   const { container } = render(
     <MemoryRouter initialEntries={['/cards/1']}>
-      <PageContext.Provider value={mockCardsPage}>
+      <PageContext.Provider value={{ page: mockCardsPage, query: '' }}>
         <Card title="Charmander" id="2" img="charmander_small_image_url" />
       </PageContext.Provider>
     </MemoryRouter>
@@ -35,7 +35,7 @@ it('Clicking on a card opens a detailed card component', () => {
         <Route
           path="/cards/:page"
           element={
-            <PageContext.Provider value={mockCardsPage}>
+            <PageContext.Provider value={{ page: mockCardsPage, query: '' }}>
               <Card
                 title="Charmander"
                 id="2"

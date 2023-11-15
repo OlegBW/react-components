@@ -31,7 +31,7 @@ it('The pagination component updates URL query parameter when page changes', () 
           <Route
             path="/cards/:page"
             element={
-              <PageContext.Provider value={mockCardsPage}>
+              <PageContext.Provider value={{ page: mockCardsPage, query: '' }}>
                 <Pagination />
               </PageContext.Provider>
             }
