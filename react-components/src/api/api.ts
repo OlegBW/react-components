@@ -1,74 +1,77 @@
+import { RequestQuery, PokemonCard, CardsPage } from '../types';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+
 const API_KEY = '990a7910-7099-4459-8238-fc39b0d4d6ee';
 const API_BASE_URL = 'https://api.pokemontcg.io/v2/cards';
 
-export type RequestQuery = {
-  q?: string;
-  page?: number;
-  pageSize?: number;
-  orderBy?: string;
-  select?: string;
-};
-
-export type PokemonCard = {
-  id: string;
-  name: string;
-  images: {
-    small: string;
-    large: string;
-  };
-  flavorText: string;
-  evolvesTo?: string[];
-  evolvesFrom?: string;
-};
-
-export type CardsPage = {
-  data: PokemonCard[];
-  page: number;
-  pageSize: number;
-  count: number;
-  totalCount: number;
-};
-
-function parseUrl(base: string, query: RequestQuery): string {
-  const url = new URL(base);
+function parseParams(query: RequestQuery): string {
+  const params = new URLSearchParams();
   for (const [k, v] of Object.entries(query)) {
-    url.searchParams.set(k, typeof v === 'string' ? v : String(v));
+    params.set(k, typeof v === 'string' ? v : String(v));
   }
-  return String(url);
+  return String(params);
 }
 
-export async function getCard(id: string): Promise<PokemonCard> {
-  const url = `${API_BASE_URL}/${id}`;
-
-  const resp = await fetch(url, {
-    method: 'GET',
-    headers: {
-      'X-Api-Key': API_KEY,
+export const pokemonApi = createApi({
+  reducerPath: 'pokemonApi',
+  baseQuery: fetchBaseQuery({
+    baseUrl: API_BASE_URL,
+    prepareHeaders: (headers) => {
+      headers.set('X-Api-Key', API_KEY);
     },
-  });
+  }),
+  endpoints: (builder) => ({
+    getCard: builder.query<{ data: PokemonCard }, string>({
+      query: (id) => `/${id}`,
+    }),
+    getCards: builder.query<CardsPage, RequestQuery>({
+      query: (query) => `?${parseParams(query)}`,
+    }),
+  }),
+});
 
-  if (resp.ok) {
-    return resp.json();
-  }
+export const { useGetCardQuery, useGetCardsQuery } = pokemonApi;
 
-  throw new Error(`Status:${resp.status} - ${resp.statusText}`);
-}
+// function parseUrl(base: string, query: RequestQuery): string {
+//   const url = new URL(base);
+//   for (const [k, v] of Object.entries(query)) {
+//     url.searchParams.set(k, typeof v === 'string' ? v : String(v));
+//   }
+//   return String(url);
+// }
 
-export async function getCards(query: RequestQuery): Promise<CardsPage> {
-  if (!query.pageSize) query.pageSize = 20;
+// export async function getCard(id: string): Promise<PokemonCard> {
+//   const url = `${API_BASE_URL}/${id}`;
 
-  const url = parseUrl(API_BASE_URL, query);
+//   const resp = await fetch(url, {
+//     method: 'GET',
+//     headers: {
+//       'X-Api-Key': API_KEY,
+//     },
+//   });
 
-  const resp = await fetch(url, {
-    method: 'GET',
-    headers: {
-      'X-Api-Key': API_KEY,
-    },
-  });
+//   if (resp.ok) {
+//     return resp.json();
+//   }
 
-  if (resp.ok) {
-    return resp.json();
-  }
+//   throw new Error(`Status:${resp.status} - ${resp.statusText}`);
+// }
 
-  throw new Error(`Status:${resp.status} - ${resp.statusText}`);
-}
+// export async function getCards(query: RequestQuery): Promise<CardsPage> {
+//   if (!query.pageSize) query.pageSize = 20;
+
+//   const url = parseUrl(API_BASE_URL, query);
+
+//   const resp = await fetch(url, {
+//     method: 'GET',
+//     headers: {
+//       'X-Api-Key': API_KEY,
+//     },
+//   });
+
+//   if (resp.ok) {
+//     return resp.json();
+//   }
+
+//   throw new Error(`Status:${resp.status} - ${resp.statusText}`);
+// }

@@ -14,7 +14,11 @@ export default function Card({ title, img, id }: Props) {
   return (
     <div
       className="pokemon-card"
-      onClick={() => navigate(`details/${id}?${params.toString()}`)}
+      onClick={(e) => {
+        console.log(`details/${id}?${params.toString()}`);
+        navigate(`details/${id}?${params.toString()}`);
+        e.stopPropagation();
+      }}
     >
       <h4 className="pokemon-card__title">{title}</h4>
       <div className="pokemon-card__img-wrapper">

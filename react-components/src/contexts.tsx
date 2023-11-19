@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { CardsPage } from './api/api';
+import { CardsPage } from './types';
 
 type initialContext = {
   page: CardsPage;

@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { ChangeEvent, MouseEvent } from 'react';
 import '../styles/search-bar.css';
-import { useNavigate, useNavigation, useSearchParams } from 'react-router-dom';
-// import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { set } from '../features/query/querySlice';
+import { RootState } from '../store';
 
 const initialValue = {
   query: '',
@@ -15,9 +15,9 @@ const initialValue = {
 export default function SearchBar() {
   const [state, setState] = useState(initialValue);
   const navigate = useNavigate();
-  const navigation = useNavigation();
   const [params] = useSearchParams();
   const dispatch = useDispatch();
+  const isLoading = useSelector((state: RootState) => state.isLoading.value);
 
   useEffect(() => {
     let query = localStorage.getItem('query');
@@ -80,7 +80,7 @@ export default function SearchBar() {
       >
         Search
       </button>
-      {navigation.state === 'loading' ? <div className="loader"></div> : ''}
+      {isLoading ? <div className="loader"></div> : ''}
     </div>
   );
 }

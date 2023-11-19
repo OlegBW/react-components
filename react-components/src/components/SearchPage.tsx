@@ -1,19 +1,32 @@
-import { CardsPage } from '../api/api';
 import CardsList from './CardsList';
 import SearchBar from './SearchBar';
 import Pagination from './Pagination';
 import PageSize from './PageSize';
 import {
-  useLoaderData,
   Outlet,
   useNavigate,
   useSearchParams,
+  useParams,
 } from 'react-router-dom';
 import '../styles/search-page.css';
 import { PageContext } from '../contexts';
 
+import { useGetCardsQuery } from '../api/api';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../store';
+import { set } from '../features/isLoading/isLoadingSlice';
+
 export default function SearchPage() {
-  const cards = useLoaderData() as CardsPage;
+  const dispatch = useDispatch();
+  const query = useSelector((state: RootState) => state.query.value);
+  const pageSize = useSelector((state: RootState) => state.pageSize.value);
+  const { page } = useParams();
+  const { data, error, isLoading } = useGetCardsQuery({
+    q: `name:${query}*`,
+    pageSize,
+    page: Number(page),
+  });
+  dispatch(set(isLoading));
   const navigate = useNavigate();
   const [params] = useSearchParams();
 
@@ -28,17 +41,25 @@ export default function SearchPage() {
       <div className="search-page">
         <SearchBar />
         <PageSize />
-        <PageContext.Provider
-          value={{
-            page: cards,
-            query: params.get('search') ?? '',
-          }}
-        >
-          <CardsList />
-          <Pagination />
-        </PageContext.Provider>
+        {error ? (
+          <div>Error</div>
+        ) : isLoading ? (
+          <div>Loading</div>
+        ) : data ? (
+          <>
+            <PageContext.Provider
+              value={{
+                page: data,
+                query: params.get('search') ?? '',
+              }}
+            >
+              <CardsList />
+              <Pagination />
+            </PageContext.Provider>
+            <Outlet></Outlet>
+          </>
+        ) : null}
       </div>
-      <Outlet></Outlet>
     </div>
   );
 }

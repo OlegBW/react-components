@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-// import { PokemonCard } from '../api/api';
+import { PokemonCard } from '../types';
 import Card from './Card';
 import '../styles/card-list.css';
 import { PageContext } from '../contexts';
@@ -18,7 +18,7 @@ export default function CardsList() {
 
   return (
     <div className="card-list">
-      {pokemonData.map((pokemon) => {
+      {pokemonData.map((pokemon: PokemonCard) => {
         return (
           <Card
             key={pokemon.id}
