@@ -1,5 +1,4 @@
 import { NavLink, useSearchParams, useParams } from 'react-router-dom';
-// import { PokemonCard } from '../types';
 import { useGetCardQuery } from '../api/api';
 import '../styles/details.css';
 
